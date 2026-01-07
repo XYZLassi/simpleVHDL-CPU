@@ -1,0 +1,2 @@
+#!/usr/bin/sh
+gunzip --stdout $1 | gtkwave --vcd

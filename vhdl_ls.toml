@@ -1,0 +1,7 @@
+[libraries]
+
+# Defines library work
+defaultlib.files = [
+  'src/**/*.vhd',
+  'tb/**/*.vhd',
+]

@@ -1,0 +1,47 @@
+def get_src_files():
+    for dir in ["src/"]:
+        for root, dirs, files in os.walk(dir, topdown=False):
+            for file in files:
+                if str.endswith(file,'.vhd'):
+                    file_path = os.path.join(root,file)
+                    yield file,file_path
+
+
+rule lib:
+    input:
+        "lib/{name}.vhd"
+    output:
+        "lib/{name}-obj{std}.cf"
+    shell:
+        "ghdl -a --std={wildcards.std} --ieee=synopsys --warn-no-vital-generic --workdir=lib --work={wildcards.name} {input}"
+
+rule src:
+    input:
+        src=[p for f,p in get_src_files()]
+    output:
+        "simulation/work-obj{std}.cf"
+    run:
+        import os
+        shell("mkdir -p simulation")
+
+        a_files = list()
+        for file,file_path in get_src_files():
+            a_files.append(file)
+            shell(f"ghdl -a -P=lib --std={wildcards.std} --ieee=synopsys --warn-no-vital-generic --workdir=simulation --work=work {file_path}")
+                    
+        for file in a_files:
+            name = file.split('.')[0]
+            shell(f"ghdl -e -P=lib --std={wildcards.std} --ieee=synopsys --warn-no-vital-generic --workdir=simulation --work=work {name}")
+
+rule tb_wave:
+    input:
+        work="simulation/work-obj08.cf",
+        tb="tb/{name}.vhd"
+    output:
+        "{name}.vcdgz"
+    shell:
+        """
+            ghdl -a -P=lib --std=08 --ieee=synopsys --warn-no-vital-generic --workdir=simulation --work=work {input.tb}
+            ghdl -e -P=lib --std=08 --ieee=synopsys --warn-no-vital-generic --workdir=simulation --work=work {wildcards.name}
+            ghdl -r -P=lib --workdir=simulation --work=work --std=08 --ieee=synopsys {wildcards.name} --stop-time=500ns --vcdgz={output}
+        """

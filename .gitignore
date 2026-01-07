@@ -1,0 +1,15 @@
+# Work Directories
+simulation/
+.venv/
+.snakemake/
+
+# Build Files
+*.o
+*.cf
+*.build.json
+*.asc
+*.bin
+
+# Wavefiles
+**/*.vcdgz
+
