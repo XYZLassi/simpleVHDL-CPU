@@ -38,7 +38,7 @@ rule tb_wave:
         work="simulation/work-obj08.cf",
         tb="tb/{name}.vhd"
     output:
-        "{name}.vcdgz"
+        "tb/{name}.vcdgz"
     shell:
         """
             ghdl -a -P=lib --std=08 --ieee=synopsys --warn-no-vital-generic --workdir=simulation --work=work {input.tb}

@@ -15,6 +15,7 @@ architecture rtl of tb_alu is
     
     signal c_out: std_logic := 'X';
 
+    signal logic_s: std_logic_vector (1 downto 0) := "00";
     signal s : std_logic_vector(4 downto 0) := "00000";
 
     signal z : std_logic_vector(3 downto 0) := "XXXX";
@@ -31,6 +32,7 @@ begin
         a => a,
         b => b,
         s => s,
+        logic_s => logic_s,
         c_out => c_out,
         z => z
     );
